@@ -11,8 +11,10 @@ import org.jooq.impl.SQLDataType;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.function.Function;
 
 public class GuavaRangeTest extends AbstractDbTest {
@@ -39,7 +41,7 @@ public class GuavaRangeTest extends AbstractDbTest {
     }
 
     @Test
-    public void localDate() {
+    public void localDateRange() {
         runSuite(
                 new DefaultDataType<>(SQLDialect.POSTGRES, SQLDataType.OTHER, "daterange").asConvertedDataType(new LocalDateRangeBinding()),
                 LocalDate::toString,
@@ -50,13 +52,54 @@ public class GuavaRangeTest extends AbstractDbTest {
     }
 
     @Test
-    public void instant() {
+    public void instantRange() {
         runSuite(
                 new DefaultDataType<>(SQLDialect.POSTGRES, SQLDataType.OTHER, "tstzrange").asConvertedDataType(new InstantRangeBinding()),
                 Instant::toString,
                 v -> v.plusSeconds(1), v -> v.minusSeconds(1),
                 Instant.parse("2010-01-01T23:30:00Z"),
                 Instant.parse("2010-02-15T00:00:00Z")
+        );
+    }
+
+    @Test
+    public void localDateTimeRange() {
+        runSuite(
+                new DefaultDataType<>(SQLDialect.POSTGRES, SQLDataType.OTHER, "tsrange").asConvertedDataType(new LocalDateTimeRangeBinding()),
+                LocalDateTime::toString,
+                v -> v.plusSeconds(1), v -> v.minusSeconds(1),
+                LocalDateTime.parse("2010-01-01T23:30:00"),
+                LocalDateTime.parse("2010-02-15T00:00:00")
+        );
+    }
+
+    @Test
+    public void integerRange() {
+        this.runSuite(
+                new DefaultDataType<>(SQLDialect.POSTGRES, SQLDataType.OTHER, "int4range").asConvertedDataType(new IntegerRangeBinding()),
+                Object::toString,
+                v -> v + 1, v -> v - 1,
+                10, 20
+        );
+    }
+
+    @Test
+    public void longRange() {
+        this.runSuite(
+                new DefaultDataType<>(SQLDialect.POSTGRES, SQLDataType.OTHER, "int8range").asConvertedDataType(new LongRangeBinding()),
+                Object::toString,
+                v -> v + 1, v -> v - 1,
+                10L, 20L
+        );
+    }
+
+    @Test
+    public void bigDecimalRange() {
+        this.runSuite(
+                new DefaultDataType<>(SQLDialect.POSTGRES, SQLDataType.OTHER, "numrange").asConvertedDataType(new BigDecimalRangeBinding()),
+                Object::toString,
+                v -> v.add(BigDecimal.valueOf(0.01)), v -> v.subtract(BigDecimal.valueOf(0.01)),
+                BigDecimal.valueOf(10.23), BigDecimal.valueOf(100)
         );
     }
 }

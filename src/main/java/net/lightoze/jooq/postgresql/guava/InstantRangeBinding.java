@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatterBuilder;
 
 public class InstantRangeBinding extends AbstractRangeBinding<Instant> {
 
-    private static final Instant ZERO = Instant.EPOCH;
+    private static final Range<Instant> EMPTY = Range.openClosed(Instant.EPOCH, Instant.EPOCH);
     private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
             .appendLiteral('"')
             .append(DateTimeFormatter.ISO_LOCAL_DATE)
@@ -27,7 +27,7 @@ public class InstantRangeBinding extends AbstractRangeBinding<Instant> {
 
     @Override
     protected Range<Instant> getEmpty() {
-        return Range.openClosed(ZERO, ZERO);
+        return EMPTY;
     }
 
     @Override

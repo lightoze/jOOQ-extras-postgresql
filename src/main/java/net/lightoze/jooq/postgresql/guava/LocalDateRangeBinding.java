@@ -6,7 +6,8 @@ import java.time.LocalDate;
 
 public class LocalDateRangeBinding extends AbstractRangeBinding<LocalDate> {
 
-    private static final LocalDate ZERO = LocalDate.of(0, 1, 1);
+    private static final LocalDate EPOCH = LocalDate.parse("1970-01-01");
+    private static final Range<LocalDate> EMPTY = Range.openClosed(EPOCH, EPOCH);
 
     public LocalDateRangeBinding() {
         super("daterange");
@@ -14,7 +15,7 @@ public class LocalDateRangeBinding extends AbstractRangeBinding<LocalDate> {
 
     @Override
     protected Range<LocalDate> getEmpty() {
-        return Range.openClosed(ZERO, ZERO);
+        return EMPTY;
     }
 
     @Override
