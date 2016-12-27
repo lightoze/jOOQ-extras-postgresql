@@ -17,11 +17,11 @@ public abstract class AbstractRangeBinding<T extends Comparable> extends Abstrac
         this.type = type;
     }
 
-    abstract Range<T> getEmpty();
+    protected abstract Range<T> getEmpty();
 
-    abstract T parse(String text);
+    protected abstract T parse(String text);
 
-    abstract String format(T value);
+    protected abstract String format(T value);
 
     @Override
     public Converter<Object, Range<T>> converter() {
@@ -38,7 +38,7 @@ public abstract class AbstractRangeBinding<T extends Comparable> extends Abstrac
                     return getEmpty();
                 }
                 BoundType lowerBound = str.charAt(0) == '[' ? BoundType.CLOSED : BoundType.OPEN;
-                BoundType upperBound = str.charAt(str.length() - 1) == '[' ? BoundType.CLOSED : BoundType.OPEN;
+                BoundType upperBound = str.charAt(str.length() - 1) == ']' ? BoundType.CLOSED : BoundType.OPEN;
                 int separator = str.indexOf(',');
                 T lower = parseImpl(str.substring(1, separator));
                 T upper = parseImpl(str.substring(separator + 1, str.length() - 1));

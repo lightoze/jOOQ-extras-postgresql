@@ -8,22 +8,22 @@ public class LocalDateRangeBinding extends AbstractRangeBinding<LocalDate> {
 
     private static final LocalDate ZERO = LocalDate.of(0, 1, 1);
 
-    protected LocalDateRangeBinding(String type) {
+    public LocalDateRangeBinding() {
         super("daterange");
     }
 
     @Override
-    Range<LocalDate> getEmpty() {
+    protected Range<LocalDate> getEmpty() {
         return Range.openClosed(ZERO, ZERO);
     }
 
     @Override
-    LocalDate parse(String text) {
+    protected LocalDate parse(String text) {
         return LocalDate.parse(text);
     }
 
     @Override
-    String format(LocalDate value) {
+    protected String format(LocalDate value) {
         return value.toString();
     }
 }

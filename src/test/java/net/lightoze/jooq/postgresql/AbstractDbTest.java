@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class AbstractDbTest {
+public abstract class AbstractDbTest {
 
     @ClassRule
     public static DockerRule dbRule = DockerRule.builder()
@@ -28,7 +28,7 @@ public class AbstractDbTest {
             .waitFor(WaitFor.tcpPort(5432))
             .build();
 
-    DSLContext db;
+    protected DSLContext db;
 
     @Before
     public void initConnection() throws SQLException {

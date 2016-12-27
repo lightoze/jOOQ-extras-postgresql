@@ -6,7 +6,7 @@ import java.sql.*;
 
 public abstract class AbstractArrayBinding<O, T> implements Binding<O[], T> {
 
-    abstract String typeName();
+    protected abstract String typeName();
 
     @Override
     public void sql(BindingSQLContext<T> ctx) throws SQLException {
