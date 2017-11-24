@@ -30,11 +30,14 @@ public abstract class AbstractDbTest {
 
     protected DSLContext db;
 
+    protected Connection createConnection() throws SQLException {
+        String url = "jdbc:postgresql://localhost:" + dbRule.getExposedContainerPort("5432") + "/jooq-test";
+        return DriverManager.getConnection(url, "jooq-test", "jooq-test");
+    }
+
     @Before
     public void initConnection() throws SQLException {
-        String url = "jdbc:postgresql://localhost:" + dbRule.getExposedContainerPort("5432") + "/jooq-test";
-        Connection connection = DriverManager.getConnection(url, "jooq-test", "jooq-test");
-        db = DSL.using(connection, SQLDialect.POSTGRES);
+        db = DSL.using(createConnection(), SQLDialect.POSTGRES);
     }
 
     @After
