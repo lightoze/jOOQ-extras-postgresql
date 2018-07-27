@@ -31,9 +31,9 @@ public abstract class AbstractRangeBinding<T extends Comparable> extends Abstrac
                 if (object == null) {
                     return null;
                 }
-                PGobject o = (PGobject) object;
-                Preconditions.checkArgument(type.equals(o.getType()));
-                String str = o.getValue();
+                PGobject obj = (PGobject) object;
+                Preconditions.checkArgument(type.equals(obj.getType()));
+                String str = obj.getValue();
                 if (str.equals("empty")) {
                     return getEmpty();
                 }
