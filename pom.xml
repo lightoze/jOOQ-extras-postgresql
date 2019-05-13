@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <prerequisites>
         <maven>3.0</maven>
@@ -9,7 +8,7 @@
     <groupId>net.lightoze.jooq-extras</groupId>
     <artifactId>jooq-extras-postgresql</artifactId>
     <description>jOOQ extras for PostgreSQL</description>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <packaging>jar</packaging>
 
     <name>jOOQ extras for PostgreSQL</name>
@@ -35,7 +34,8 @@
         <url>https://github.com/lightoze/jOOQ-extras-postgresql</url>
         <connection>scm:git:https://github.com/lightoze/jOOQ-extras-postgresql.git</connection>
         <developerConnection>scm:git:git@github.com:lightoze/jOOQ-extras-postgresql.git</developerConnection>
-    </scm>
+      <tag>jooq-extras-postgresql-0.1</tag>
+  </scm>
 
     <distributionManagement>
         <snapshotRepository>
