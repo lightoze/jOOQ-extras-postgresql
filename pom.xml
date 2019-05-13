@@ -8,6 +8,7 @@
 
     <groupId>net.lightoze.jooq-extras</groupId>
     <artifactId>jooq-extras-postgresql</artifactId>
+    <description>jOOQ extras for PostgreSQL</description>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
