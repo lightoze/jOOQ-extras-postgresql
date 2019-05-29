@@ -28,16 +28,12 @@ public abstract class PrimitiveListBinding<T> extends AbstractArrayBinding<T, Li
         return new Converter<T[], List<T>>() {
             @Override
             public List<T> from(T[] arr) {
-                if (arr == null) {
-                    return null;
-                } else {
-                    return Arrays.asList(arr);
-                }
+                return arr == null ? null : Arrays.asList(arr);
             }
 
             @Override
             public T[] to(List<T> list) {
-                return list.toArray(emptyArray);
+                return list == null ? null : list.toArray(emptyArray);
             }
 
             @Override
