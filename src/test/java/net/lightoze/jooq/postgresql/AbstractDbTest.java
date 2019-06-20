@@ -1,6 +1,8 @@
 package net.lightoze.jooq.postgresql;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.junit.After;
@@ -33,6 +35,11 @@ public abstract class AbstractDbTest {
     protected Connection createConnection() throws SQLException {
         String url = "jdbc:postgresql://localhost:" + dbRule.getExposedContainerPort("5432") + "/jooq-test";
         return DriverManager.getConnection(url, "jooq-test", "jooq-test");
+    }
+
+    protected boolean fetchCondition(Condition condition) {
+        Field<Boolean> field = DSL.field(condition);
+        return db.select(field).fetchOne(field);
     }
 
     @Before
