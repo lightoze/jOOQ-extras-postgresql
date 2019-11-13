@@ -27,7 +27,7 @@
         <jooq.version>3.11.11</jooq.version>
         <slf4j.version>1.7.26</slf4j.version>
         <junit.version>4.12</junit.version>
-        <jackson.version>2.9.9.3</jackson.version>
+        <jackson.version>2.9.10.1</jackson.version>
     </properties>
 
     <scm>
