@@ -22,29 +22,9 @@ public class NotificationTest extends AbstractDbTest {
     public void notification() throws InterruptedException {
         List<String> messages = new ArrayList<>();
 
-        NotificationListener listener = new NotificationListener() {
-
-            @Override
-            protected Connection getConnection() throws SQLException {
-                return createConnection();
-            }
-
-            @Override
-            protected void closeConnection(Connection connection) throws SQLException {
-                connection.close();
-            }
-
-            @Override
-            protected void receiveNotification(PGNotification notification) {
-                String str = notification.getName();
-                if (StringUtils.isNotEmpty(notification.getParameter())) {
-                    str += ":" + notification.getParameter();
-                }
-                messages.add(str);
-            }
-        };
-        listener.setChannels(new String[]{"a"});
-        listener.startAsync().awaitRunning();
+        TestNotificationListener listener = new TestNotificationListener(messages);
+        listener.setChannels("a");
+        listener.start();
         Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
 
         NotificationSender.notify(db, "a");
@@ -67,8 +47,51 @@ public class NotificationTest extends AbstractDbTest {
         }
 
         Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
-        listener.stopAsync().awaitTerminated();
+        listener.stop();
 
         Assert.assertEquals(Arrays.asList("a", "a:i1", "a:i2", "a:i3", "a:i4", "a:i5", "a:i6", "a:i7", "a:i8", "a:i9"), messages);
     }
+
+    private class TestNotificationListener extends NotificationListener {
+
+        private final List<String> messages;
+        private volatile Thread thread;
+
+        public TestNotificationListener(List<String> messages) {
+            this.messages = messages;
+        }
+
+        @Override
+        protected Connection getConnection() throws SQLException {
+            return createConnection();
+        }
+
+        @Override
+        protected void closeConnection(Connection connection) throws SQLException {
+            connection.close();
+        }
+
+        @Override
+        protected void receiveNotification(PGNotification notification) {
+            String str = notification.getName();
+            if (StringUtils.isNotEmpty(notification.getParameter())) {
+                str += ":" + notification.getParameter();
+            }
+            messages.add(str);
+        }
+
+        public void start() {
+            setRunning(true);
+            thread = new Thread(this::run);
+            thread.setName("testNotificationListener");
+            thread.start();
+        }
+
+        public void stop() throws InterruptedException {
+            setRunning(false);
+            thread.join();
+        }
+
+    }
+
 }
