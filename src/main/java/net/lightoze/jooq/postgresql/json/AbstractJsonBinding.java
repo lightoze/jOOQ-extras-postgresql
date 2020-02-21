@@ -11,6 +11,10 @@ import org.postgresql.util.PGobject;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * @deprecated Use {@link JacksonJsonConverter} instead since jOOQ 3.12
+ */
+@Deprecated
 public abstract class AbstractJsonBinding<T> extends AbstractObjectBinding<T> {
 
     private final String pgType;

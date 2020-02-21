@@ -81,14 +81,14 @@ public abstract class NotificationListener extends AbstractExecutionThreadServic
             }
             try {
                 for (String channel : channels) {
-                    Statement stmt = conn.createStatement();
-                    stmt.execute("LISTEN " + channel);
-                    stmt.close();
+                    try (Statement stmt = conn.createStatement()) {
+                        stmt.execute("LISTEN " + channel);
+                    }
                 }
                 while (isRunning()) {
-                    Statement stmt = conn.createStatement();
-                    stmt.execute("SELECT 1");
-                    stmt.close();
+                    try (Statement stmt = conn.createStatement()) {
+                        stmt.execute("SELECT 1");
+                    }
 
                     PGNotification[] notifications = conn.unwrap(PGConnection.class).getNotifications();
                     if (notifications == null || notifications.length == 0) {
