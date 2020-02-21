@@ -1,6 +1,8 @@
 package net.lightoze.jooq.postgresql.notify;
 
-import com.google.common.util.concurrent.AbstractExecutionThreadService;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.postgresql.PGConnection;
 import org.postgresql.PGNotification;
 import org.slf4j.Logger;
@@ -10,36 +12,24 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public abstract class NotificationListener extends AbstractExecutionThreadService {
+public abstract class NotificationListener {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    @Getter
     private String[] channels = new String[0];
+    @Getter
+    @Setter
     private long retryDelayMillis = 5000;
-    private long fetchIntervalMillis = 500;
+    @Getter
+    @Setter
+    private int fetchTimeoutMillis = 1000;
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
+    private volatile boolean running;
 
-    public String[] getChannels() {
-        return channels;
-    }
-
-    public void setChannels(String[] channels) {
+    public void setChannels(String... channels) {
         this.channels = channels;
-    }
-
-    public long getRetryDelayMillis() {
-        return retryDelayMillis;
-    }
-
-    public void setRetryDelayMillis(long retryDelayMillis) {
-        this.retryDelayMillis = retryDelayMillis;
-    }
-
-    public long getFetchIntervalMillis() {
-        return fetchIntervalMillis;
-    }
-
-    public void setFetchIntervalMillis(long fetchIntervalMillis) {
-        this.fetchIntervalMillis = fetchIntervalMillis;
     }
 
     /**
@@ -67,19 +57,22 @@ public abstract class NotificationListener extends AbstractExecutionThreadServic
      */
     protected abstract void receiveNotification(PGNotification notification);
 
-    @Override
-    protected void run() throws Exception {
+    protected void run() {
         while (isRunning()) {
             Connection conn;
             try {
                 conn = getConnection();
-                conn.setAutoCommit(true);
             } catch (Throwable e) {
                 log.error("Could not get a connection", e);
-                Thread.sleep(retryDelayMillis);
+                try {
+                    Thread.sleep(retryDelayMillis);
+                } catch (InterruptedException ex) {
+                    // ignore
+                }
                 continue;
             }
             try {
+                conn.setAutoCommit(true);
                 for (String channel : channels) {
                     try (Statement stmt = conn.createStatement()) {
                         stmt.execute("LISTEN " + channel);
@@ -89,11 +82,8 @@ public abstract class NotificationListener extends AbstractExecutionThreadServic
                     try (Statement stmt = conn.createStatement()) {
                         stmt.execute("SELECT 1");
                     }
-
-                    PGNotification[] notifications = conn.unwrap(PGConnection.class).getNotifications();
-                    if (notifications == null || notifications.length == 0) {
-                        Thread.sleep(fetchIntervalMillis);
-                    } else {
+                    PGNotification[] notifications = conn.unwrap(PGConnection.class).getNotifications(fetchTimeoutMillis);
+                    if (notifications != null) {
                         for (PGNotification notification : notifications) {
                             try {
                                 receiveNotification(notification);
@@ -106,7 +96,11 @@ public abstract class NotificationListener extends AbstractExecutionThreadServic
                 }
             } catch (Throwable e) {
                 log.error("Error while listening for notifications", e);
-                Thread.sleep(retryDelayMillis);
+                try {
+                    Thread.sleep(retryDelayMillis);
+                } catch (InterruptedException ex) {
+                    // ignore
+                }
             } finally {
                 try {
                     closeConnection(conn);
