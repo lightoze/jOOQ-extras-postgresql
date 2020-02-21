@@ -20,7 +20,7 @@ public abstract class AbstractDbTest {
 
     @ClassRule
     public static DockerRule dbRule = DockerRule.builder()
-            .imageName("postgres:9.6")
+            .imageName("postgres:11.7")
             .name("jooq-extras-test")
             .restartPolicy(RestartPolicy.always())
             .expose("5432")

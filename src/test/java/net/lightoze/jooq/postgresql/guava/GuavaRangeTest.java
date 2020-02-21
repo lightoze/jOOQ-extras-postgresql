@@ -66,7 +66,7 @@ public class GuavaRangeTest extends AbstractDbTest {
     public void instantRange() {
         runSuite(
                 new DefaultDataType<>(SQLDialect.POSTGRES, SQLDataType.OTHER, "tstzrange").asConvertedDataType(new InstantRangeBinding()),
-                PgExtraDSL.INSTANT,
+                SQLDataType.INSTANT,
                 Instant::toString,
                 v -> v.plusSeconds(1), v -> v.minusSeconds(1),
                 Instant.parse("2010-01-01T23:30:00Z"),

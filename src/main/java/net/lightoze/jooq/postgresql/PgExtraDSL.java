@@ -6,17 +6,14 @@ import org.jooq.Field;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultDataType;
-import org.jooq.impl.SQLDataType;
 import org.postgresql.util.PGInterval;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 
 public interface PgExtraDSL {
 
-    DataType<Instant> INSTANT = SQLDataType.OFFSETDATETIME.asConvertedDataType(new InstantConverter());
     DataType<Duration> DURATION = new DefaultDataType<>(SQLDialect.POSTGRES, PGInterval.class, "interval day to second")
             .asConvertedDataType(new DurationBinding());
 
@@ -45,11 +42,6 @@ public interface PgExtraDSL {
     @SafeVarargs
     static <T> Condition overlaps(Field<? extends Collection<T>> field, T... values) {
         return overlaps(field, Arrays.asList(values));
-    }
-
-
-    static Field<Instant> currentInstant() {
-        return DSL.currentTimestamp().cast(INSTANT);
     }
 
 

@@ -18,7 +18,7 @@ public class PrimitivesTest extends AbstractDbTest {
     @Test
     public void instant() {
         Instant now = Instant.now().minusSeconds(1);
-        Field<Instant> field = PgExtraDSL.currentInstant();
+        Field<Instant> field = DSL.currentInstant();
         Assert.assertTrue(db.select(field).fetchOne(field).isAfter(now));
     }
 
