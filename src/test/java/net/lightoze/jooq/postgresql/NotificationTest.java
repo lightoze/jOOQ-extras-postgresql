@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NotificationTest extends AbstractDbTest {
 
@@ -23,7 +24,7 @@ public class NotificationTest extends AbstractDbTest {
         List<String> messages = new ArrayList<>();
 
         TestNotificationListener listener = new TestNotificationListener(messages);
-        listener.setChannels("a");
+        listener.getConfiguration().setChannels("a");
         listener.start();
         Uninterruptibles.sleepUninterruptibly(1, TimeUnit.SECONDS);
 
@@ -55,6 +56,7 @@ public class NotificationTest extends AbstractDbTest {
     private class TestNotificationListener extends NotificationListener {
 
         private final List<String> messages;
+        private AtomicBoolean running = new AtomicBoolean(false);
         private volatile Thread thread;
 
         public TestNotificationListener(List<String> messages) {
@@ -81,14 +83,14 @@ public class NotificationTest extends AbstractDbTest {
         }
 
         public void start() {
-            setRunning(true);
-            thread = new Thread(this::run);
+            running.set(true);
+            thread = new Thread(() -> run(running::get));
             thread.setName("testNotificationListener");
             thread.start();
         }
 
         public void stop() throws InterruptedException {
-            setRunning(false);
+            running.set(false);
             thread.join();
         }
 

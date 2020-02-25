@@ -1,6 +1,7 @@
 package net.lightoze.jooq.postgresql.notify;
 
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.postgresql.PGConnection;
@@ -11,26 +12,15 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.function.BooleanSupplier;
 
 public abstract class NotificationListener {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Getter
-    private String[] channels = new String[0];
-    @Getter
     @Setter
-    private long retryDelayMillis = 5000;
-    @Getter
-    @Setter
-    private int fetchTimeoutMillis = 1000;
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
-    private volatile boolean running;
-
-    public void setChannels(String... channels) {
-        this.channels = channels;
-    }
+    private Configuration configuration = new Configuration();
 
     /**
      * Obtain a new database connection. The connection should not have a timeout
@@ -48,7 +38,9 @@ public abstract class NotificationListener {
      * @param connection database connection
      * @throws SQLException when error occurred
      */
-    protected abstract void closeConnection(Connection connection) throws SQLException;
+    protected void closeConnection(Connection connection) throws SQLException {
+        connection.close();
+    }
 
     /**
      * Process incoming notification.
@@ -57,15 +49,15 @@ public abstract class NotificationListener {
      */
     protected abstract void receiveNotification(PGNotification notification);
 
-    protected void run() {
-        while (isRunning()) {
+    public void run(BooleanSupplier runningSupplier) {
+        while (runningSupplier.getAsBoolean()) {
             Connection conn;
             try {
                 conn = getConnection();
             } catch (Throwable e) {
                 log.error("Could not get a connection", e);
                 try {
-                    Thread.sleep(retryDelayMillis);
+                    Thread.sleep(configuration.getRetryDelayMillis());
                 } catch (InterruptedException ex) {
                     // ignore
                 }
@@ -73,16 +65,17 @@ public abstract class NotificationListener {
             }
             try {
                 conn.setAutoCommit(true);
-                for (String channel : channels) {
+                for (String channel : configuration.getChannels()) {
                     try (Statement stmt = conn.createStatement()) {
                         stmt.execute("LISTEN " + channel);
                     }
                 }
-                while (isRunning()) {
+                while (runningSupplier.getAsBoolean()) {
                     try (Statement stmt = conn.createStatement()) {
+                        stmt.setQueryTimeout(configuration.getFetchTimeoutMillis());
                         stmt.execute("SELECT 1");
                     }
-                    PGNotification[] notifications = conn.unwrap(PGConnection.class).getNotifications(fetchTimeoutMillis);
+                    PGNotification[] notifications = conn.unwrap(PGConnection.class).getNotifications(configuration.getFetchTimeoutMillis());
                     if (notifications != null) {
                         for (PGNotification notification : notifications) {
                             try {
@@ -97,7 +90,7 @@ public abstract class NotificationListener {
             } catch (Throwable e) {
                 log.error("Error while listening for notifications", e);
                 try {
-                    Thread.sleep(retryDelayMillis);
+                    Thread.sleep(configuration.getRetryDelayMillis());
                 } catch (InterruptedException ex) {
                     // ignore
                 }
@@ -110,4 +103,19 @@ public abstract class NotificationListener {
             }
         }
     }
+
+    @Data
+    public static class Configuration {
+
+        private String[] channels = new String[0];
+        private long retryDelayMillis = 10000;
+        private int validationTimeoutMillis = 3000;
+        private int fetchTimeoutMillis = 1000;
+
+        public void setChannels(String... channels) {
+            this.channels = channels;
+        }
+
+    }
+
 }
