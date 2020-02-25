@@ -8,7 +8,7 @@
     <groupId>net.lightoze.jooq-extras</groupId>
     <artifactId>jooq-extras-postgresql</artifactId>
     <description>jOOQ extras for PostgreSQL</description>
-    <version>0.4</version>
+    <version>0.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>jOOQ extras for PostgreSQL</name>
@@ -34,7 +34,7 @@
         <url>https://github.com/lightoze/jOOQ-extras-postgresql</url>
         <connection>scm:git:https://github.com/lightoze/jOOQ-extras-postgresql.git</connection>
         <developerConnection>scm:git:git@github.com:lightoze/jOOQ-extras-postgresql.git</developerConnection>
-      <tag>jooq-extras-postgresql-0.4</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <distributionManagement>
