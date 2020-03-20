@@ -8,20 +8,28 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.jooq.Converter;
 
-public abstract class AbstractJacksonConverter<O, T> implements Converter<O, T> {
+/**
+ * @param <O> The database type
+ * @param <T> The user type
+ * @param <E> The element type for collections, otherwise the same as {@code <T>}
+ */
+public abstract class AbstractJacksonConverter<O, T, E> implements Converter<O, T> {
 
     @Getter(value = AccessLevel.PROTECTED, lazy = true)
     private final ObjectWriter objectWriter = createObjectWriter();
     @Getter(value = AccessLevel.PROTECTED, lazy = true)
     private final ObjectReader objectReader = createObjectReader();
-    private final JavaType type;
+    private final JavaType userType;
+    private final JavaType elementType;
 
     public AbstractJacksonConverter() {
-        this.type = resolveType();
+        this.userType = resolveType(1);
+        this.elementType = resolveType(2);
     }
 
-    public AbstractJacksonConverter(JavaType type) {
-        this.type = type;
+    public AbstractJacksonConverter(JavaType userType, JavaType elementType) {
+        this.userType = userType;
+        this.elementType = elementType;
     }
 
     protected ObjectMapper getMapper() {
@@ -30,33 +38,33 @@ public abstract class AbstractJacksonConverter<O, T> implements Converter<O, T> 
         return mapper;
     }
 
-    protected T getNull() {
+    protected E getNull() {
         return null;
     }
 
-    protected boolean isNull(T value) {
+    protected boolean isNull(E value) {
         return false;
     }
 
     protected ObjectWriter createObjectWriter() {
-        return getMapper().writerFor(type);
+        return getMapper().writerFor(elementType);
     }
 
     protected ObjectReader createObjectReader() {
-        return getMapper().readerFor(type);
+        return getMapper().readerFor(elementType);
     }
 
     @Override
     public Class<T> toType() {
         //noinspection unchecked
-        return (Class<T>) type.getRawClass();
+        return (Class<T>) userType.getRawClass();
     }
 
-    private JavaType resolveType() {
+    private JavaType resolveType(int index) {
         JavaType selfType = getMapper().constructType(getClass());
         JavaType[] typeParameters = selfType.findTypeParameters(AbstractJacksonConverter.class);
-        if (typeParameters.length == 2) {
-            return typeParameters[1];
+        if (typeParameters.length == 3) {
+            return typeParameters[index];
         } else {
             throw new UnsupportedOperationException("Could not resolve value type for converter " + getClass().getName());
         }

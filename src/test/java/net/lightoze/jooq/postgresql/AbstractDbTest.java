@@ -37,9 +37,12 @@ public abstract class AbstractDbTest {
         return DriverManager.getConnection(url, "jooq-test", "jooq-test");
     }
 
-    protected boolean fetchCondition(Condition condition) {
-        Field<Boolean> field = DSL.field(condition);
+    protected <T> T fetch(Field<T> field) {
         return db.select(field).fetchOne(field);
+    }
+
+    protected boolean fetchCondition(Condition condition) {
+        return fetch(DSL.field(condition));
     }
 
     @Before

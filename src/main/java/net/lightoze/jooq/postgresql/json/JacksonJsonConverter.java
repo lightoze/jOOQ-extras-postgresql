@@ -6,13 +6,13 @@ import org.jooq.JSON;
 
 import java.io.IOException;
 
-public class JacksonJsonConverter<T> extends AbstractJacksonConverter<JSON, T> {
+public class JacksonJsonConverter<T> extends AbstractJacksonConverter<JSON, T, T> {
 
     public JacksonJsonConverter() {
     }
 
-    public JacksonJsonConverter(JavaType type) {
-        super(type);
+    public JacksonJsonConverter(JavaType userType, JavaType elementType) {
+        super(userType, elementType);
     }
 
     @Override
