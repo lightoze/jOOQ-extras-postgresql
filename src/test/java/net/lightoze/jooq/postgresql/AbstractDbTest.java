@@ -54,7 +54,7 @@ public abstract class AbstractDbTest {
     public void closeConnection() {
         if (db != null) {
             try {
-                db.close();
+                db.connection(Connection::close);
             } finally {
                 db = null;
             }

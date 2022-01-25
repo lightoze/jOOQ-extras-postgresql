@@ -36,7 +36,7 @@ public class GuavaRangeTest extends AbstractDbTest {
         Assert.assertTrue(range.contains(decrement.apply(upper)));
         Assert.assertFalse(range.contains(upper));
 
-        Field<Range<T>> intersect = DSL.field("? * ?", type, field, DSL.val(Range.atMost(lower), type));
+        Field<Range<T>> intersect = DSL.field("? * ?", type, field, DSL.inline(Range.atMost(lower), type));
         range = db.select(intersect).fetchOne(intersect);
         Assert.assertTrue(range.contains(lower));
         Assert.assertFalse(range.contains(increment.apply(lower)));

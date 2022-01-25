@@ -18,28 +18,28 @@ public class JacksonTest extends AbstractDbTest {
 
     @Test
     public void json() {
-        DataType<Obj> type = SQLDataType.JSON.asConvertedDataType(new JacksonJsonConverter<Obj>() {});
+        DataType<Obj> type = SQLDataType.JSON.asConvertedDataType(new JacksonJsonConverter<>() {});
         Field<Obj> field = DSL.field("'{\"x\": \"xx\", \"y\": 10}'::json", type);
         Assert.assertEquals(new Obj("xx", 10), fetch(field));
     }
 
     @Test
     public void jsonb() {
-        DataType<Obj> type = SQLDataType.JSONB.asConvertedDataType(new JacksonJsonbConverter<Obj>() {});
+        DataType<Obj> type = SQLDataType.JSONB.asConvertedDataType(new JacksonJsonbConverter<>() {});
         Field<Obj> field = DSL.field("'{\"x\": \"xx\", \"y\": 10}'::jsonb", type);
         Assert.assertEquals(new Obj("xx", 10), fetch(field));
     }
 
     @Test
     public void jsonList() {
-        DataType<List<Obj>> type = SQLDataType.JSON.getArrayDataType().asConvertedDataType(new JacksonJsonListConverter<Obj>() {});
+        DataType<List<Obj>> type = SQLDataType.JSON.getArrayDataType().asConvertedDataType(new JacksonJsonListConverter<>() {});
         Field<List<Obj>> field = DSL.field("'{\"{\\\"x\\\": \\\"xx\\\", \\\"y\\\": 10}\", \"{\\\"x\\\": \\\"xxx\\\", \\\"y\\\": 12}\"}'::json[]", type);
         Assert.assertEquals(Arrays.asList(new Obj("xx", 10), new Obj("xxx", 12)), fetch(field));
     }
 
     @Test
     public void jsonbList() {
-        DataType<List<Obj>> type = SQLDataType.JSONB.getArrayDataType().asConvertedDataType(new JacksonJsonbListConverter<Obj>() {});
+        DataType<List<Obj>> type = SQLDataType.JSONB.getArrayDataType().asConvertedDataType(new JacksonJsonbListConverter<>() {});
         Field<List<Obj>> field = DSL.field("'{\"{\\\"x\\\": \\\"xx\\\", \\\"y\\\": 10}\", \"{\\\"x\\\": \\\"xxx\\\", \\\"y\\\": 12}\"}'::jsonb[]", type);
         Assert.assertEquals(Arrays.asList(new Obj("xx", 10), new Obj("xxx", 12)), fetch(field));
     }

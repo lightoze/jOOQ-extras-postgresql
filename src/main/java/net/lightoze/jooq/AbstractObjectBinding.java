@@ -1,16 +1,18 @@
 package net.lightoze.jooq;
 
 import org.jooq.*;
+import org.jooq.impl.AbstractBinding;
+import org.jooq.impl.DSL;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Types;
 
-public abstract class AbstractObjectBinding<T> implements Binding<Object, T> {
+public abstract class AbstractObjectBinding<T> extends AbstractBinding<Object, T> {
 
     @Override
-    public void sql(BindingSQLContext<T> ctx) throws SQLException {
-        ctx.render().sql("?");
+    protected void sqlInline(BindingSQLContext<T> ctx) throws SQLException {
+        ctx.render().visit(DSL.inline(ctx.convert(converter()).value()));
     }
 
     @Override

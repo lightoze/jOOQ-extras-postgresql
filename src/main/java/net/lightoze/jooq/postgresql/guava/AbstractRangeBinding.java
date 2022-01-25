@@ -25,7 +25,7 @@ public abstract class AbstractRangeBinding<T extends Comparable> extends Abstrac
 
     @Override
     public Converter<Object, Range<T>> converter() {
-        return new Converter<Object, Range<T>>() {
+        return new Converter<>() {
             @Override
             public Range<T> from(Object object) {
                 if (object == null) {

@@ -15,7 +15,7 @@ public class CoordinateBinding extends AbstractObjectBinding<Coordinate> {
 
     @Override
     public Converter<Object, Coordinate> converter() {
-        return new Converter<Object, Coordinate>() {
+        return new Converter<>() {
             @Override
             public Coordinate from(Object object) {
                 if (object == null) {

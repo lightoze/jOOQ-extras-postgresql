@@ -10,7 +10,7 @@ public class DurationBinding extends AbstractObjectBinding<Duration> {
 
     @Override
     public Converter<Object, Duration> converter() {
-        return new Converter<Object, Duration>() {
+        return new Converter<>() {
             @Override
             public Duration from(Object object) {
                 if (object == null) {

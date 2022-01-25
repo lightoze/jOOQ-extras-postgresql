@@ -50,7 +50,7 @@ public abstract class AbstractJsonBinding<T> extends AbstractObjectBinding<T> {
 
     @Override
     public Converter<Object, T> converter() {
-        return new Converter<Object, T>() {
+        return new Converter<>() {
             @Override
             public T from(Object object) {
                 try {
