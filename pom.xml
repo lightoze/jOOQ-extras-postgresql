@@ -24,7 +24,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <postgresql.version>42.3.3</postgresql.version>
+        <postgresql.version>42.3.7</postgresql.version>
         <jooq.version>3.16.2</jooq.version>
         <slf4j.version>1.7.30</slf4j.version>
         <junit.version>4.13.1</junit.version>
